@@ -1,14 +1,14 @@
 import pandas as pd
 import os
 
-os.setcwd('')
+os.setcwd('"/Users/N1/Op690/estimating-impact-of-opioid-prescription-regulations-team-3/00_source/')
 
 # To show all columns when using head or sample
 pd.set_option('display.max_columns', None)
 
 # Read Files
-FL_Mort_load = pd.read_csv("/Users/N1/690 local/FL_mortality_2003_2015.csv")
-FL_Opiate_load = pd.read_parquet("/Users/N1/Op690/estimating-impact-of-opioid-prescription-regulations-team-3/00_source/FLopiate.parquet", engine = 'fastparquet')
+FL_Mort_load = pd.read_csv("FL_mortality_2003_2015.csv")
+FL_Opiate_load = pd.read_parquet("FLopiate.parquet", engine = 'fastparquet')
 
 FL_Mort = FL_Mort_load.copy()
 FL_Opiate = FL_Opiate_load.copy()
@@ -72,10 +72,14 @@ FL_Merge['_merge'].unique
 FL_Merge[FL_Merge['_merge'] == 'both']
 
 # FL_Mort
-FL_Merge[FL_Merge['_merge'] == 'left_only']
+FL_Merge_Left = FL_Merge[FL_Merge['_merge'] == 'left_only']
 
 # FL_Opiate
-FL_Merge[FL_Merge['_merge'] == 'right_only']
+FL_Merge_Right = FL_Merge[FL_Merge['_merge'] == 'right_only']
+
+FL_Merge_Left['County'].unique()
+FL_Merge_Right['County'].unique()
+
 # We have a bunch of Counties that equal none
 FL_Opiate[FL_Opiate['County'] == None]
 FL_Opiate[FL_Opiate['County'] == 'SEMINOLE']
@@ -84,3 +88,48 @@ FL_Mort[FL_Mort['County'] == 'SEMINOLE']
 #Something is wrong with one of the keys since all the years, County name and State match
 FL_Opiate_Test[FL_Opiate_Test['County'] == 'SEMINOLE']
 FL_Mort_Test[FL_Mort_Test['County'] == 'SEMINOLE']
+
+#Opiate_Test only goes till 2012 while Mort goes till 2015
+FL_Mort_Test['Year'].unique()
+FL_Opiate_Test['Year'].unique()
+
+#Drop Mort beyond 2012 from Mort
+FL_Mort_Test['Year'] = FL_Mort_Test['Year'].astype(int)
+FL_Mort_Test = FL_Mort_Test[FL_Mort_Test['Year'] < 2013]
+FL_Mort_Test['Year'] = FL_Mort_Test['Year'].astype(str)
+
+#Drop None from Opiate
+FL_Opiate_Test = FL_Opiate_Test[FL_Opiate_Test['County'] != None]
+FL_Opiate_Test['Year'].unique()
+
+#These match so that isnt the problem
+FL_Mort_Test['State'].unique()
+FL_Opiate_Test['State'].unique()
+
+# FL_Opiate_Test has a lot more counties
+sorted(FL_Mort_Test['County'].unique())
+FL_Mort_Test['County'].replace(to_replace=['WAL'], value=['WALTON'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['LE'], value=['LEE'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['ST. JOHNS'], value=['SAINT JOHNS'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['ST. LUCIE'], value=['SAINT LUCIE'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['BA'], value=['BAY'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['CLA'], value=['CLAY'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['LEV'], value=['LEVY'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['MARI'], value=['MARION'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['MARTI'], value=['MARTIN'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['NASSA'], value=['NASSAU'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['PAS'], value=['PASCO'], inplace=True)
+FL_Mort_Test['County'].replace(to_replace=['OKEECHOBEE'], value=['OKEECHOBEE'], inplace=True)
+sorted(FL_Opiate_Test['County'].unique())
+
+# Dropping Counties that do not match // NOT DONE YET
+keepers = ['ALACHUA', 'BA', 'BREVARD', 'BROWARD', 'CITRUS', 'CLA', 'COLLIER',
+       'DUVAL', 'ESCAMBIA', 'HERNAND', 'HIGHLANDS', 'HILLSBOROUGH',
+       'INDIAN RIVER', 'LAKE', 'LEE', 'LE', 'MANATEE', 'MARI', 'MARTI',
+       'MIAMI-DADE', 'MONROE', 'OKALOOSA', 'ORANGE', 'OSCEOLA',
+       'PALM BEACH', 'PAS', 'PINELLAS', 'POLK', 'ST. LUCIE', 'SANTA ROSA',
+       'SARASOTA', 'SEMINOLE', 'VOLUSIA', 'CHARLOTTE', 'NASSA', 'PUTNAM',
+       'ST. JOHNS', 'COLUMBIA', 'WAL', 'OKEECHOBEE', 'FLAGLER', 'LEV']
+
+FL_Opiate_Test = FL_Opiate_Test[FL_Opiate_Test['County'].isin(keepers)]
+FL_Mort_Test = FL_Mort_Test[FL_Mort_Test['County'].isin(keepers)]
