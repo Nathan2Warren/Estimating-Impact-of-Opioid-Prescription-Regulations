@@ -72,9 +72,27 @@ FL_Merge = pd.merge(FL_Mort_Grouped, FL_Opiate_Grouped, how='outer', on=[
 
 FL_Merge.head(50)
 
+FL_Merge_Grouped = FL_Merge.groupby(['Year']).sum().reset_index()
+
+FL_POP = pd.read_csv("/Users/N1/Downloads/FL_Census_Data.csv")
+FL_POP.dtypes
+FL_POP_Grouped = FL_POP.groupby(['Year', 'State', 'County']).sum().reset_index()
+FL_POP_Grouped['County'] = FL_POP_Grouped['County'].str.rstrip(' County')
+FL_POP_Grouped = FL_POP_Grouped.drop(['County'], axis=1)
+FL_POP_Grouped['County']
+FL_POP_Grouped['Total_population'] = FL_POP_Grouped['Total_population'].str.replace(',', '')
+FL_POP_Grouped['Total_population'] = FL_POP_Grouped['Total_population'].astype(int)
+FL_POP_Grouped['Total_population']
+FL_POP_Grouped.sum()
+ALL3_Merge = pd.merge(FL_Merge, FL_POP_Grouped
+FL_POP_Grouped
+FL_POP_Grouped=FL_POP_Grouped.groupby(['Year', 'State']).sum().reset_index()
+
+FL_POP_Grouped
+FL_Merge_Grouped
 # Change object to other type
 FL_Merge.dtypes
-FL_Merge['Year'] = FL_Merge['Year'].astype(int)
+FL_Merge['Year']=FL_Merge['Year'].astype(int)
 
 
 ###############################################################################
@@ -88,12 +106,12 @@ FL_Merge['_merge'].unique
 FL_Merge[FL_Merge['_merge'] == 'both']
 
 # FL_Mort
-FL_Merge_Left = FL_Merge[FL_Merge['_merge'] == 'left_only']
+FL_Merge_Left=FL_Merge[FL_Merge['_merge'] == 'left_only']
 FL_Merge_Left.shape
 FL_Merge_Left
 
 # FL_Opiate
-FL_Merge_Right = FL_Merge[FL_Merge['_merge'] == 'right_only']
+FL_Merge_Right=FL_Merge[FL_Merge['_merge'] == 'right_only']
 FL_Merge_Right.shape
 FL_Merge_Right
 
