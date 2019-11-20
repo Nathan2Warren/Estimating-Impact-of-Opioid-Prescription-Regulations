@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 ### Inputs for pulling information ###
-state = 'WA'
+state = 'PA'
 
 ### Functions ###
 def subseter (x):
@@ -54,16 +54,18 @@ Opioid['Year'] = Opioid['Year'].astype(str)
 Opioid['County'] = Opioid['County'].astype(str)
 
 Mortality['County'] = Mortality['County'].astype(str)
+Mortality['Year'] = Mortality['Year'].astype(int)
 Mortality['Year'] = Mortality['Year'].astype(str)
-Mortality['Year'] = Mortality['Year'].str.rstrip('.0')
+#Mortality['Year'] = Mortality['Year'].str.rstrip('.0')
 Mortality[['County','State']] = Mortality.County.str.split(', ',expand = True)
 Mortality['State'] = Mortality['State'].astype(str)
-Mortality['Deaths'] = Mortality['Deaths'].str.rstrip('.0')
-Mortality['Deaths'] = Mortality['Deaths'].astype(int)
+Mortality['Deaths'] = Mortality['Deaths'].astype(float).astype(int)
 
 ### Data cleaning ###
 Mortality['County'] = Mortality['County'].str.rstrip(' County')
 Mortality['County'] = Mortality['County'].str.upper()
+
+Mortality['Year'].unique()
 
 ### Aggregating Opioid data & Mortality do for mortality ###
 Opioid = Opioid.groupby(['County', 'Year', 'State']).sum().reset_index()
@@ -71,17 +73,61 @@ Opioid = Opioid.drop(columns = ['CALC_BASE_WT_IN_GM', 'DOSAGE_UNIT', 'MME_Conver
 Opioid.drop_duplicates()
 
 Mortality = Mortality.groupby(['County', 'Year', 'State']).sum().reset_index()
-Mortality = Mortality.drop(columns = ['Unnamed: 0', 'County Code', 'Year Code'])
+Mortality = Mortality.drop(columns = ['Unnamed: 0', 'County Code', 'Year Code'], errors = 'ignore')
 Mortality = Mortality.drop_duplicates()
 
 ### Copy and paste into excel and identify the misnamed Mortality Counties, use vlookup ###
 sorted(Mortality['County'].unique())
 sorted(Opioid['County'].unique())
 
+
+
+
+
+
 ### Replaceing misnamed counties ###
-d = {"BE": "BENTON", "CHELA":"CHELAN", "GRA":"GRANT", "MAS":"MASON", "THURS":"THURSTON", "SKAGI":"SKAGIT"}
+
+### Pensalvnia ###
+d = {'ALLEGHE':'ALLEGHENY', 'CARB':'CARBON', 'DAUPHI':'DAUPHIN', 'FRANKLI':'FRANKLIN','JEFFERS':'JEFFERSON',
+'LEBA':'LEBANON', 'MC KEA':'MCKEAN', 'MIFFLI':'MIFFLIN', 'MONTGOMER':'MONTGOMERY', 'NORTHAMP':'NORTHAMPTON',
+'SOMERSE':'SOMERSET', 'VENANG':'VENANGO', 'WASHING':'WASHINGTON'}
+
+### Ohio ###
+#d = {'ALLE':'ALLEN', 'BELM':'BELMONT', 'BROW':'BROWN', 'CHAMPAIG':'CHAMPAIGN', 'CLERM':'CLERMONT', 'CLI':'CLINTON',
+#'FRANKLI':'FRANKLIN', 'GUERNSE':'GUERNSEY', 'HAMIL':'HAMILTON', 'HARDI':'HARDIN', 'HUR':'HURON', 'JACKS':'JACKSON',
+#'JEFFERS':'JEFFERSON', 'LORAI':'LORAIN', 'MADIS':'MADISON', 'MARI':'MARION', 'MONTGOMER':'MONTGOMERY', 'PICKAWA':'PICKAWAY',
+#'SANDUSK':'SANDUSKY', 'SCI':'SCIOTO', 'SHELB':'SHELBY', 'SUMMI':'SUMMIT', 'UNI':'UNION', 'WARRE':'WARREN', 'WASHING':'WASHINGTON'}
+
+### Texas ###
+#d = {'ANDERS':'ANDERSON', 'CAMER':'CAMERON', 'COLLI':'COLLINS', 'DE':'DE WITT', 'EL PAS':'EL PASO', 'GALVES':'GALVESTON',
+#'GRAYS':'GRAYSON', 'HARDI':'HARDIN', 'HIDALG':'HILDAGO', 'JEFFERS':'JEFFERSON', 'JOHNS':'JOHNSON', 'KAUFMA':'KAUFMAN',
+#'LIBER':'LIBERTY', 'MCLENNA':'MCLENNAN', 'MONTGOMER':'MONTGOMERY', 'SAN PATRICI':'SAN PATRICIO', 'TARRA':'TARRANT',
+#'TOM GREE':'TOM GREEN', 'VAN ZAND':'VAN ZANDT', 'WILLIAMS':'WILLIAMSON'}
+
+### Florida ###
+#d = {'ALACHUA':'ALACHUA', 'CLA':'CLAY', 'HERNAND':'HERNANDO', 'LE':'LEON', 'LEV':'LEVY', 'MARI':'MARION', 'NASSA':'NASSAU',
+#'PASC':'PASCO', 'ST.JOHNS':'SAINT JOHNS', 'ST.LUCIE':'SAINT LUCIE', 'WAL':'WALTON'}
+
 Mortality["County"] = Mortality["County"].replace(d)
+
 ### REMOVE ANY COUNTIES THAT YOU CANNOT FIND A REPLACEMENT !!! ###
+Mortality["County"].unique()
+Opioid['County'].unique()
+
+### Filter out stuff ###
+#Opioid = Opioid.query('County != "nan"')
+#Mortality = Mortality.query('County != "BA"')
+
+Mortality["County"].unique()
+Opioid['County'].unique()
 
 ### Merging Mortality and Opioid ###
 Combine =  pd.merge(Opioid, Mortality, how = 'left', on = ['County', 'Year', 'State'], validate = '1:1')
+
+### Write out, puts in state name into path ###
+out = ("C:/Users/abhis/Documents/Duke University/IDS 690 Practical Data Science/{}_cleaned_and_merged.csv").format(state)
+Combine.to_csv(out)
+
+
+Mortality['Deaths'].dtype
+Combine_t['Deaths'].astype(float).unique()
