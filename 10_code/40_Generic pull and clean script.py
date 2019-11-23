@@ -42,7 +42,9 @@ Mortality.shape
 
 ###  Extract year from the TRANSACTION_DATE string ###
 Opioid['TRANSACTION_DATE'] = Opioid['TRANSACTION_DATE'].astype('str')
-Opioid['Year'] = Opioid['TRANSACTION_DATE'].str.extract('([0-9]{4}$)', expand=True)
+Opioid['date'] = pd.to_datetime(Opioid.TRANSACTION_DATE, format='%m%d%Y')
+Opioid['Month'] = Opioid.date.dt.month
+Opioid['Year'] = Opioid.date.dt.year
 
 # Rename so we can merge later
 Opioid.rename(columns = {'BUYER_STATE':'State'}, inplace = True)
@@ -72,7 +74,7 @@ Mortality['County'] = Mortality['County'].str.upper()
 Mortality['Year'].unique()
 
 ### Aggregating Opioid data & Mortality do for mortality ###
-Opioid = Opioid.groupby(['County', 'Year', 'State']).sum().reset_index()
+Opioid = Opioid.groupby(['County', 'Year', 'State', 'Month']).sum().reset_index()
 Opioid = Opioid.drop(columns = ['CALC_BASE_WT_IN_GM', 'DOSAGE_UNIT', 'MME_Conversion_Factor', 'dos_str'],  errors = 'ignore')
 Opioid.drop_duplicates()
 
