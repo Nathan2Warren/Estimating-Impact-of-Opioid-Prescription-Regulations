@@ -8,7 +8,6 @@ os.chdir("/Users/N1/Op690/estimating-impact-of-opioid-prescription-regulations-t
 # Load Data and create list of states
 Census = pd.read_csv("/Users/N1/Desktop/Census_Full.csv", header=0)
 State_list = Census['Geography'].unique()
-State_list
 Census = Census.melt(id_vars=["Geography"],
                      var_name="Year",
                      value_name="Population")
@@ -18,7 +17,6 @@ Replace_fixed = ['USA', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'F
                  'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY',
                  'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
 Replace_dict = dict(zip(Replace_list, Replace_fixed))
-Replace_dict
 
 # Replace State names with 2 letter abbreviations
 Census['Geography'].replace(Replace_dict, inplace=True)
@@ -59,4 +57,5 @@ p = (ggplot(Merged, aes(x='Year', y='Deaths_Normalized', color='State')) +
      theme(plot_title=element_text(size=20))
      #theme(panel_background=element_rect(fill="gray", alpha = .2))
      )
-(ggsave(p, width=10, height=10))
+(ggsave(p, filename="16_All_States_Trend", width=10, height=10,
+        path="/Users/N1/Op690/estimating-impact-of-opioid-prescription-regulations-team-3/30_results/"))
