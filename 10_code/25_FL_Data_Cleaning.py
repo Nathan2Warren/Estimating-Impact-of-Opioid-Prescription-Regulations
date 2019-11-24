@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Change to directory for ease of loading files
-os.chdir('/Users/N1/Op690/estimating-impact-of-opioid-prescription-regulations-team-3/00_source/')
+os.chdir('/Users/N1/Op690/estimating-impact-of-opioid-prescription-regulations-team-3/20_intermediate_files/')
 pd.set_option('display.max_columns', None)
 
 
@@ -11,9 +11,9 @@ pd.set_option('display.max_columns', None)
 ###############################################################################
 
 # FL_Opiate load with only the columns we need
-FL_Opiate = pd.read_parquet("FLopiate.parquet", engine='fastparquet', columns=['BUYER_COUNTY', 'TRANSACTION_DATE',
-                                                                               'CALC_BASE_WT_IN_GM',
-                                                                               'MME_Conversion_Factor', 'BUYER_STATE'])
+FL_Opiate = pd.read_parquet("10_FLopiate.parquet", engine='fastparquet', columns=['BUYER_COUNTY', 'TRANSACTION_DATE',
+                                                                                  'CALC_BASE_WT_IN_GM',
+                                                                                  'MME_Conversion_Factor', 'BUYER_STATE'])
 
 # Drop Duplicates - there are no duplicates
 # FL_Opiate.shape
@@ -53,7 +53,7 @@ FL_Opiate[FL_Opiate['County'] == None]
 FL_Opiate = FL_Opiate[FL_Opiate['County'] != None]
 
 # Save to Parquet file
-FL_Opiate.to_parquet("FLopiate cleaned.parquet", engine='fastparquet')
+FL_Opiate.to_parquet("25_FLopiate cleaned.parquet", engine='fastparquet')
 
 
 ###############################################################################
@@ -61,7 +61,8 @@ FL_Opiate.to_parquet("FLopiate cleaned.parquet", engine='fastparquet')
 ###############################################################################
 
 # Load and Drop useless columns
-FL_Mort = pd.read_csv("FL_mortality_2003_2015.csv", usecols=['Year', 'County', 'Deaths', 'State'])
+FL_Mort = pd.read_csv("15_FL_mortality_2003_2015.csv", usecols=[
+                      'Year', 'County', 'Deaths', 'State'])
 
 FL_Mort.head(5)
 
