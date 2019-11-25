@@ -35,69 +35,29 @@ Deathper2011 = print(df[df.Year == 2011].Deaths.sum() / df[df.Year == 2011].Popu
 Deathper2012 = print(df[df.Year == 2012].Deaths.sum() / df[df.Year == 2012].Population.sum())
 
 from pandas import DataFrame
-data = {'Year':['2006','2007','2008','2009','2010','2011','2012'], 'MME/Capita':['0.25634691103596535','0.29729474376455006','0.3380123523745701','0.3875592528147102','0.4492204699226896','0.4148365814898084','0.24196307940097167']}
-MME = DataFrame(data,columns=['Year','MME/Capita'])
+data = {'Year':['2006','2007','2008','2009','2010','2011','2012'], 'MME/Capita':['0.25634691103596535','0.29729474376455006','0.3380123523745701','0.3875592528147102','0.4492204699226896','0.4148365814898084','0.24196307940097167'],
+'Deaths/Capita':['8.70235304058954e-05','8.568355897942634e-05','8.958405636666133e-05','9.343491539225856e-05','9.569470374046673e-05','0.00010375433824375567','9.902407573742254e-05'],
+'MME':['25610085.388993837','29991935.392387405','34429817.54246391','39865525.25000516','46717759.10185604','43525033.29054618','37882725.67251197'],'Deaths':['8694','8644','9125','9611','9952','10886','10481']}
+Summary = DataFrame(data,columns=['Year','MME/Capita','Deaths/Capita','MME','Deaths'])
 
-from pandas import DataFrame
-data = {'Year':['2006','2007','2008','2009','2010','2011','2012'], 'Deaths/Capita':['8.70235304058954e-05','8.568355897942634e-05','8.958405636666133e-05','9.343491539225856e-05','9.569470374046673e-05','0.00010375433824375567','9.902407573742254e-05']}
-Deaths = DataFrame(data,columns=['Year','Deaths/Capita'])
+Summary['MME Per Capita'] = Summary['MME/Capita'].astype('float')
+Summary['Year'] = Summary['Year'].astype('float')
+Summary['Deaths Per Capita'] = Summary['Deaths/Capita'].astype('float')
+Summary['MME'] = Summary['MME'].astype('float')
+Summary['Deaths'] = Summary['Deaths'].astype('float')
 
-from pandas import DataFrame
-data = {'Year':['2006','2007','2008','2009','2010','2011','2012'], 'MME':['25610085.388993837',
-'29991935.392387405',
-'34429817.54246391',
-'39865525.25000516',
-'46717759.10185604',
-'43525033.29054618',
-'37882725.67251197']}
-MME1 = DataFrame(data,columns=['Year','MME'])
-
-from pandas import DataFrame
-data = {'Year':['2006','2007','2008','2009','2010','2011','2012'], 'Deaths':['8694',
-'8644',
-'9125',
-'9611',
-'9952',
-'10886',
-'10481']}
-Deaths1 = DataFrame(data,columns=['Year','Deaths'])
-
-MME['MME Per Capita'] = MME['MME/Capita'].astype('float')
-MME['year'] = MME['Year'].astype('float')
-
-Deaths['Deaths Per Capita'] = Deaths['Deaths/Capita'].astype('float')
-Deaths['year'] = Deaths['Year'].astype('float')
-
-MME1['MME'] = MME1['MME'].astype('float')
-MME1['year'] = MME1['Year'].astype('float')
-
-Deaths1['Deaths'] = Deaths1['Deaths'].astype('float')
-Deaths1['year'] = Deaths1['Year'].astype('float')
-
-from plotnine import *
-p1 = (ggplot(MME, aes(x='year', y='MME Per Capita')) +
-        geom_line() +
-        ggtitle('MME Per Capita by Year of All Counties')
-)
-(ggsave(p1, filename="MME Per Capita", width=10, height=10,
-        path="/Users/chenyu/Duke/IDS 690/jupyter_lab"))
-
-p2 = (ggplot(Deaths, aes(x='year', y='Deaths Per Capita')) +
-        geom_line() +
-        ggtitle('Deaths Per Capita by Year of All Counties')
-)
-(ggsave(p2, filename="Deaths Per Capita", width=10, height=10,
-        path="/Users/chenyu/Duke/IDS 690/jupyter_lab"))
-p3 = (ggplot(MME1, aes(x='year', y='MME')) +
-        geom_line() +
+## plot total MME by Year
+p1 = (ggplot(Summary, aes(x='Year', y='MME')) +
+        geom_col() +
         ggtitle('MME by Year of All Counties')
 )
-(ggsave(p3, filename="MME", width=10, height=10,
-        path="/Users/chenyu/Duke/IDS 690/jupyter_lab"))
-p4 = (ggplot(Deaths1, aes(x='year', y='Deaths')) +
-        geom_line() +
-        ggtitle('Deaths by Year of All Counties')
-)
-(ggsave(p4, filename="Deaths", width=10, height=10,
+(ggsave(p1, filename="MME", width=10, height=10,
         path="/Users/chenyu/Duke/IDS 690/jupyter_lab"))
         
+## plot total Deaths by Year
+p2 = (ggplot(Summary, aes(x='Year', y='Deaths')) +
+        geom_col() +
+        ggtitle('Deaths by Year of All Counties')
+)
+(ggsave(p2, filename="Deaths", width=10, height=10,
+        path="/Users/chenyu/Duke/IDS 690/jupyter_lab"))
