@@ -28,7 +28,7 @@ sorted(Opioid_Mort['County'].unique().astype('str'))
 Opioid_Mort['County_State'] = Opioid_Mort['County'].map(str) + ' ' + Opioid_Mort['State']
 
 #merge opioid wit fips
-list(sorted(Opioid_Mort_Fips.loc[Opioid_Mort_Fips['fips'].isna()]['County'].unique().astype('str')))
+#list(sorted(Opioid_Mort_Fips.loc[Opioid_Mort_Fips['fips'].isna()]['County'].unique().astype('str')))
 
 
 d= {'DE KALB IN':'DEKALB IN','DE SOTO FL':'DESOTO FL','DE WITT TX':'DEWITT TX','DEWITT IL':'DE WITT IL','LA PORTE IN':'LAPORTE IN','LA SALLE IL':'LASALLE IL','SAINT CLAIR IL':'ST. CLAIR IL','SAINT LUCIE FL':'ST. LUCIE FL','SAINT JOHNS FL':'ST. JOHNS FL','ST JOSEPH IN':'ST. JOSEPH IN'}
@@ -53,13 +53,15 @@ Opioid_Mort_Census = pd.merge(Opioid_Mort_Fips_cleaned,Census, left_on  = ['fips
 if len(Opioid_Mort_Census.loc[Opioid_Mort_Census['State_x']=='FL']['County_x'].unique()) == 67:
     print('Correct, #of counties in FL is 67')
 # print # of counties in other sates:
-
+#Opioid_Mort_Census.loc[(Opioid_Mort_Census['State_x']=='TX')&(Opioid_Mort_Census['Year']==2006)]['Population'].sum()
 #check if all counties are assigned with pop and MME
 print(Opioid_Mort_Census['MME'].isna().sum())
 print(Opioid_Mort_Census['Population'].isna().sum())
 
 # fill 0 in Nan value of deaths
 Opioid_Mort_Census.loc[:,'Deaths'].fillna(0,inplace = True)
+
+
 Opioid_Mort_Census_cleaned= Opioid_Mort_Census[['County_x','Deaths','MME','State_x','Year','County Code','Population']]
 Opioid_Mort_Census_cleaned[['Deaths','County Code','Population']] = Opioid_Mort_Census_cleaned[['Deaths','County Code','Population']].astype('int')
 Opioid_Mort_Census_cleaned.rename(columns = {'County_x':'County','State_x':'State','Year_x':'Year'},inplace = True)

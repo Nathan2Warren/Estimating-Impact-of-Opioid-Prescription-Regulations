@@ -25,5 +25,5 @@ Mortality_Pop.loc[(Mortality_Pop["State"] =='TX') & (Mortality_Pop['County Code'
 #Mortality_Pop.loc[Mortality_Pop['State_x']=='FL']['County Code'])
 
 
-Mortality_Pop.loc[Mortality_Pop['Population'].isna()]
+(Mortality_Pop['Deaths']==0).sum()/len(Mortality_Pop['Deaths'])
 Mortality_Pop.to_csv('17_mortality_pop_county_level.csv')
